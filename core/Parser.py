@@ -39,14 +39,14 @@ class Parser(object):
                 #print(line_param)
                 if _parameters[_param] in line_param:
                     _line_param = line_param.replace(_parameters[_param], \
-                                 '{BOLD}{RED}%s{END}' % _parameters[_param])
+                                     '{BOLD}{RED}%s{END}' % _parameters[_param])
                     print(" {GREEN}+{END} {BOLD}LINE{END}: %s".format(**colors) \
-                          % _line_param.format(**colors).strip())
+                              % _line_param.format(**colors).strip())
                     for split_order in _splitorder:
                         value_parsed = line_param.split(_splitparam)
                         value_parsed = value_parsed[int(_splitorder[split_order])]
                         print(" {GREEN}+{END} {BOLD}VALUE PARSED{END}: %s\n".format(**colors) \
-                          % value_parsed)
+                              % value_parsed)
                 if _parameters[_param] in content_html:
                     for line_param_list in content_html.split("\n"):
                         if _parameters[_param] in line_param_list:
@@ -56,9 +56,13 @@ class Parser(object):
                                 if _parameters[_param] in param_list[user].keys():
                                     if value_parsed not in param_list[user][_parameters[_param]].values():
                                         count = len(param_list[user][_parameters[_param]]) + 1
-                                        param_list[user][_parameters[_param]].update({"%s" % str(count):"%s" % value_parsed})
+                                        param_list[user][
+                                            _parameters[_param]
+                                        ].update(
+                                            {f"{str(count)}": f"{value_parsed}"}
+                                        )
                                 else:
-                                    param_list[user].update({"%s" % _parameters[_param]:{"1":"%s" % value_parsed}})
+                                    param_list[user].update({f"{_parameters[_param]}": {"1": f"{value_parsed}"}})
         self.saveOutput(param_list, filename)
 
     def getContainsFile(self, content_html, _contains):
@@ -67,15 +71,15 @@ class Parser(object):
             if _contains in line_contains:
                 try:
                     line_contains = line_contains.replace(_contains, \
-                                    '{BOLD}{RED}%s{END}{ITALIC}' % _contains)
+                                        '{BOLD}{RED}%s{END}{ITALIC}' % _contains)
                     print(" {GREEN}+{END} {ITALIC}%s{END}".format(**colors) \
-                          % line_contains.format(**colors))
+                              % line_contains.format(**colors))
                 except:
-                    print(" + %s" % line_contains)
+                    print(f" + {line_contains}")
 
 
     def getRegex(self, content_html, regex):
-        match_regex = re.findall( r'{}'.format(regex), content_html, re.M|re.I)
+        match_regex = re.findall(f'{regex}', content_html, re.M|re.I)
         print("\n{GREEN}[+]{END} {BLUE}REGEX FOUND{END}:".format(**colors))
         for get_regex in match_regex:
             print("{GREEN} + {END} MATCH: %s".format(**colors) % get_regex) 
@@ -86,7 +90,7 @@ class Parser(object):
         _parameters = config['parameters']
         _splitparam = config['splitparam']
         _splitorder = config['splitorder']
-        if "" != _contains:
+        if _contains != "":
             self.getContainsFile(content_html, _contains)
         if _parameters:
             print("\n{GREEN}[+]{END} {BLUE}PARAM FOUND{END}:".format(**colors))
@@ -95,7 +99,7 @@ class Parser(object):
             except Exception as inst:
                 #print(inst)
                 pass
-        
+
         if regex is not None:
             self.getRegex(content_html, regex)
 
@@ -104,8 +108,7 @@ class Parser(object):
 
     def getNumPages(self, content):
         tree = html.fromstring(content)
-        number_page = tree.xpath(self.PAGINATION)
-        if number_page:
+        if number_page := tree.xpath(self.PAGINATION):
             return number_page[len(number_page)-2]
         else:
             return "1"
