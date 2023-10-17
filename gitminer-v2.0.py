@@ -42,7 +42,7 @@ class GitMiner(object):
         with open(self.args.cookie) as txt:
             for line in txt:
                 self.cookie = headers.parseCookie(line)
-        self.search_term = "/search?o=desc&q=%s&s=indexed&type=Code" % self.args.query
+        self.search_term = f"/search?o=desc&q={self.args.query}&s=indexed&type=Code"
         self.config = None
         self.number_page = None
 
@@ -57,16 +57,14 @@ class GitMiner(object):
         content_html = requestPage(url_search, headers_github, self.cookie)
         self.number_page = p.getNumPages(content_html.content)
         print("{YELLOW}+[PAGE: 1/%s]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬{END}".format(**colors) \
-              % self.number_page)
+                  % self.number_page)
         if filename is not None:
-            write_file = open(filename, 'a')
-            write_file.write("[\n")
-            write_file.close()
+            with open(filename, 'a') as write_file:
+                write_file.write("[\n")
         p.getSearch(content_html.content, self.number_page, headers_github, self.cookie, self.config, filename, self.args.regex)
         if filename is not None:
-            write_file = open(filename, 'a')
-            write_file.write("\n]")
-            write_file.close()
+            with open(filename, 'a') as write_file:
+                write_file.write("\n]")
 
 try:
     GitMiner().start()

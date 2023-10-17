@@ -10,21 +10,18 @@ def loadModule(module_name):
         with open("config/parsers.json",'r') as file_module:
             config = file_module.read()
             module_json = json.loads(config)
-        if module_name not in module_json.keys():
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(banner())
-            if module_name is None:
-                pass
-            else:
-                print('\n{RED}[!]{END} Module {YELLOW}\"%s\"{END} not found in module file.'.format(**colors) % module_name)
-            print('\n{GREEN}[+]{END} Modules found:'.format(**colors))
-            for modules in module_json.keys():
-                print('    {GREEN}+{END} %s'.format(**colors) % modules)
-            print('\n\n')
-            sys.exit()
-        else:
+        if module_name in module_json.keys():
             return(module_json[module_name])
-            
+
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(banner())
+        if module_name is not None:
+            print('\n{RED}[!]{END} Module {YELLOW}\"%s\"{END} not found in module file.'.format(**colors) % module_name)
+        print('\n{GREEN}[+]{END} Modules found:'.format(**colors))
+        for modules in module_json.keys():
+            print('    {GREEN}+{END} %s'.format(**colors) % modules)
+        print('\n\n')
+        sys.exit()
     except FileNotFoundError:
         os.system('cls' if os.name == 'nt' else 'clear')
         print(banner())
